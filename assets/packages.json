@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "architecture": "windows-x86_64",
+  "packages": [
+    {
+      "id": "gcloud",
+      "version": "583.0.0",
+      "archiveRoot": "google-cloud-sdk",
+      "source": "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-583.0.0-windows-x86_64-bundled-python.zip",
+      "sha256": "aa423dd343dce75016ec22b94c6ea245699be19c9cd050a88898ce9c7f0136ea",
+      "bytes": 103894418,
+      "parts": [
+        {
+          "path": "assets/packages/gcloud/gcloud.zip.part001",
+          "sha256": "104dbc2f8b1d4d4ccba788e7301be5d4e860d3980633e66974f0d461e5f8fd8f",
+          "bytes": 41943040
+        },
+        {
+          "path": "assets/packages/gcloud/gcloud.zip.part002",
+          "sha256": "c89e06f46e2223dab7d1fae33494b2162003d86b98c78b9a33187cb8f3758dfd",
+          "bytes": 41943040
+        },
+        {
+          "path": "assets/packages/gcloud/gcloud.zip.part003",
+          "sha256": "5f848667a0accb7feb637a948b84db76701b0473833101fe4aefdb1959b2563b",
+          "bytes": 20008338
+        }
+      ],
+      "provenance": "Clean SDK export from Levmet-Risk/gcloud-cli-portable commit 05ec733b; generated Python bytecode caches excluded"
+    },
+    {
+      "id": "dbeaver",
+      "version": "26.2.0",
+      "archiveRoot": "dbeaver",
+      "source": "https://github.com/dbeaver/dbeaver/releases/tag/26.2.0",
+      "sha256": "cb39faf2b570612157b5e37f589a7aa474aea72026b813558371a9541b41400f",
+      "bytes": 130583855,
+      "parts": [
+        {
+          "path": "assets/packages/dbeaver/dbeaver.zip.part001",
+          "sha256": "ea18a62b8c137b4ecb1ce7d82cb0e07ef8816f514854e20fce713c6e3e8683b7",
+          "bytes": 41943040
+        },
+        {
+          "path": "assets/packages/dbeaver/dbeaver.zip.part002",
+          "sha256": "8947c62a6af9232a14dbee5cabac9b35dcd796333f27ef1115525f27589fb2b6",
+          "bytes": 41943040
+        },
+        {
+          "path": "assets/packages/dbeaver/dbeaver.zip.part003",
+          "sha256": "fcd0a19455897a452a1dd384e9b78684c4ae9bcea1d1e4ab5c5915b35930c12d",
+          "bytes": 41943040
+        },
+        {
+          "path": "assets/packages/dbeaver/dbeaver.zip.part004",
+          "sha256": "92a6d3f5248268dc1337071658175620d2e9c3d2bd3b884bb802bf31373699b5",
+          "bytes": 4754735
+        }
+      ],
+      "provenance": "Repacked installed Community distribution: application files and JRE only; no workspace, p2 state, logs, or user configuration"
+    },
+    {
+      "id": "codex",
+      "version": "0.155.0-alpha.16.3",
+      "archiveRoot": "",
+      "source": "https://github.com/openai/codex",
+      "sha256": "e8e089b47882a08c272782e46e9f49106068bec552bda967dfc86ceb786ad88c",
+      "bytes": 151128974,
+      "parts": [
+        {
+          "path": "assets/packages/codex/codex.zip.part001",
+          "sha256": "63f1c8d320a9ed6aedcf7a48ca0f6a113edf784d92a5a3e9cbeb52841043a2c4",
+          "bytes": 41943040
+        },
+        {
+          "path": "assets/packages/codex/codex.zip.part002",
+          "sha256": "09982f812d75deae89c16718fa99cb594cb6462211aa6e612698f592daaed9a7",
+          "bytes": 41943040
+        },
+        {
+          "path": "assets/packages/codex/codex.zip.part003",
+          "sha256": "4326c0277a235f8a28a9b96c56656fb013c88a7dcd2b24e94979dd0730d33939",
+          "bytes": 41943040
+        },
+        {
+          "path": "assets/packages/codex/codex.zip.part004",
+          "sha256": "da04d5cb895c7681a5003ab3d04239c63aa7621fc0cf28d274e13161d9e7c267",
+          "bytes": 25299854
+        }
+      ],
+      "provenance": "Repacked Codex CLI binaries and companion tools from the installed official OpenAI VS Code extension; no extension UI, account data, or settings"
+    }
+  ]
+}

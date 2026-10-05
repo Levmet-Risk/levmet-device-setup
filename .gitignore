@@ -1,0 +1,14 @@
+config.local.json
+*.local.json
+.cache/
+test-results/
+__pycache__/
+*.pyc
+*.log
+*.key
+*.p12
+*.pfx
+application_default_credentials.json
+credentials-config.json
+service-account*.json
+db-tunnel-sa-key.json

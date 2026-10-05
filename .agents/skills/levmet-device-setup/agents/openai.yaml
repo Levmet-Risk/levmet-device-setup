@@ -1,0 +1,4 @@
+interface:
+  display_name: "Levmet device setup"
+  short_description: "Configure Windows tools and Levmet database access"
+  default_prompt: "Use $levmet-device-setup to configure this PC from config.local.json and verify the DBeaver connection."

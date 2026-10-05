@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "email": "REPLACE_WITH_YOUR_WORK_EMAIL",
+  "instanceConnectionName": "levmet-database:europe-west2:levmet-db-pg",
+  "instanceIp": "35.230.159.21",
+  "usePrivateIp": false,
+  "database": "postgres",
+  "localPort": 5433,
+  "connectionName": "Levmet - IAM tunnel",
+  "installRoot": "%LOCALAPPDATA%\\Levmet\\DeviceSetup",
+  "caCertificatePath": "assets\\certificates\\MarexRootAndTrustedSites.cer",
+  "gcloudPath": "",
+  "gcloudConfigDirectory": "%APPDATA%\\gcloud",
+  "codexPath": "",
+  "dbeaverPath": "",
+  "dbeaverWorkspace": "%APPDATA%\\DBeaverData\\workspace6"
+}

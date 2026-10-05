@@ -1,0 +1,70 @@
+{
+    "schemaVersion":  1,
+    "files":  [
+                  {
+                      "path":  "assets/drivers/caffeine-3.1.8.jar",
+                      "sha256":  "7dd15f9df1be238ffaa367ce6f556737a88031de4294dad18eef57c474ddf1d3",
+                      "bytes":  889211
+                  },
+                  {
+                      "path":  "assets/drivers/checker-qual-3.48.3.jar",
+                      "sha256":  "443685b1b232803baaf803c15d6f5a425473c6f7b81c5f276dfcf93288e389a5",
+                      "bytes":  238620
+                  },
+                  {
+                      "path":  "assets/drivers/error_prone_annotations-2.21.1.jar",
+                      "sha256":  "d1f3c66aa91ac52549e00ae3b208ba4b9af7d72d68f230643553beb38e6118ac",
+                      "bytes":  16830
+                  },
+                  {
+                      "path":  "assets/drivers/jcl-over-slf4j-2.0.16.jar",
+                      "sha256":  "5744d62c5af556e839ab922c9fa3f737f0a5971e478ba68b2eb5256b2842ec78",
+                      "bytes":  18429
+                  },
+                  {
+                      "path":  "assets/drivers/jna-5.16.0.jar",
+                      "sha256":  "3f5233589a799eb66dc2969afa3433fb56859d3d787c58b9bc7dd9e86f0a250c",
+                      "bytes":  2003058
+                  },
+                  {
+                      "path":  "assets/drivers/jna-platform-5.16.0.jar",
+                      "sha256":  "e5a79523964509757555782bb60283e4902611013f107e4600dc93298f73f382",
+                      "bytes":  1375665
+                  },
+                  {
+                      "path":  "assets/drivers/postgis-geometry-2.5.0.jar",
+                      "sha256":  "ba7f7bcfbed7b9b113bd9b76a289d3c1a521ca7277fc028678a43fecd7a356e5",
+                      "bytes":  40904
+                  },
+                  {
+                      "path":  "assets/drivers/postgis-jdbc-2.5.0.jar",
+                      "sha256":  "ce0fff7d54854db3d0b126eed8081c6bc6c727bd1374fd542e1fbe2ad9500b46",
+                      "bytes":  22893
+                  },
+                  {
+                      "path":  "assets/drivers/postgresql-42.7.11.jar",
+                      "sha256":  "1981b31d3993c58702783c1cddf10a34e48c1f413d70ff1cb6def0a143484647",
+                      "bytes":  1142677
+                  },
+                  {
+                      "path":  "assets/drivers/slf4j-api-2.0.16.jar",
+                      "sha256":  "a12578dde1ba00bd9b816d388a0b879928d00bab3c83c240f7013bf4196c579a",
+                      "bytes":  69435
+                  },
+                  {
+                      "path":  "assets/drivers/waffle-jna-3.5.1.jar",
+                      "sha256":  "38ebb57398270ec4f9b4d31dd3851bbfc5687694ac099d686b39ed706b046590",
+                      "bytes":  72886
+                  },
+                  {
+                      "path":  "assets/proxy/cloud-sql-proxy.exe",
+                      "sha256":  "dcc7abfc1e43215932f1e9e1441e072bfcf0bbcac96110b515edb2d0fadadbb5",
+                      "bytes":  35612824
+                  },
+                  {
+                      "path":  "assets/certificates/MarexRootAndTrustedSites.cer",
+                      "sha256":  "94439029efab09b7b0e58dce86d661fca3e77bd3a16832bccb05386943a7d791",
+                      "bytes":  3294
+                  }
+              ]
+}
