@@ -1,6 +1,6 @@
 ---
 name: levmet-device-setup
-description: Set up a Windows x64 Levmet team PC for passwordless Cloud SQL PostgreSQL access, offline DBeaver drivers, Google Cloud CLI, Codex PATH, and reusable tunnel commands using this repository's user config.
+description: Set up a Windows x64 Levmet team PC for passwordless Cloud SQL PostgreSQL access with Company Portal DBeaver, Marex Artifactory drivers, Google Cloud CLI, Codex PATH, and reusable tunnel commands using this repository's user config.
 ---
 
 Use this skill from the complete `levmet-device-setup` repository. The repository
@@ -11,6 +11,21 @@ Read [the config and troubleshooting reference](references/setup.md) when prepar
 the config or diagnosing a failed phase. Run the supplied scripts rather than
 recreating installers or hand-editing the user's DBeaver workspace.
 
+The IT desk's October 2026 workflow is the default: install DBeaver from Company
+Portal, add Marex Artifactory as the first Maven repository with only its URL, and
+fully restart DBeaver before downloading drivers. Use the exact URL and ticket
+link in the reference. Configure the mirror in the same workspace as
+`dbeaverWorkspace`; the scripts do not edit Maven preferences or validate the
+origin of an existing DBeaver executable. If Company Portal does not offer
+DBeaver, direct the user to update/create their Citizen Development registration
+ticket. Do not substitute bundled DBeaver automatically.
+
+New input configs default to `dbeaverDriverSource: "artifactory"`. The explicit
+`"offline"` option retains the earlier bundled application/local-JAR workaround
+when the user chooses it. Existing installed settings without this field remain
+offline until Install is rerun. For migration, preserve the user's instance,
+email, local port, and workspace to update the same managed connection.
+
 1. Confirm this is Windows x64 and locate `config.local.json` in the repository.
    If absent, copy `config.example.json` and ask the user to edit the file on disk.
    The user supplies their own email and any changed connection values/paths.
@@ -19,6 +34,8 @@ recreating installers or hand-editing the user's DBeaver workspace.
    with a blank local PostgreSQL password and interactive Google browser sign-in.
 2. Validate through the scripts. If DBeaver is running, ask the user to save their
    work and close it before Install; never force-close an active workspace.
+   For the default workflow, complete Company Portal installation and Maven
+   configuration/restart before closing DBeaver for Install.
    Run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File <repo>\Setup.ps1
    -Phase Install`. Quote paths containing spaces. This changes user PATH and CA
    environment values, installs missing tools, and adds the managed DBeaver
@@ -31,11 +48,15 @@ recreating installers or hand-editing the user's DBeaver workspace.
 4. Run Verify. Require a successful real read-only database query matching the
    configured IAM user and database; a listening local port is insufficient.
    Verify leaves the config intact and stops only the temporary proxy it created.
+   This query does not exercise JDBC or prove Artifactory downloads work.
    Diagnose failures from the installed `logs` folder without printing tokens or
    dumping config/ADC files. Explain any external IAM/firewall action required.
 5. Have the user run `levmet-db-tunnel` in a terminal and keep it open, then run
    `levmet-dbeaver`. In already-open terminals, use the absolute generated `.cmd`
    paths under their install root, or refresh PATH from user/machine environment.
+   With Artifactory selected, the managed profile uses the standard PostgreSQL
+   driver. Allow its driver download through the internal mirror when prompted;
+   ensure the mirror is first and DBeaver has fully restarted after the change.
    Ask the user to confirm **Test Connection succeeds for the managed profile**.
    Wait for that actual confirmation; don't infer it from an open window or a
    successful network probe.

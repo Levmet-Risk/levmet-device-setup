@@ -23,8 +23,11 @@ try {
         }
         'DBeaver' {
             # This launches a user-facing interactive application intentionally.
-            $driverConfig = Join-Path $settings.dbeaverWorkspace '.metadata\.config\drivers.xml'
-            $arguments = '--launcher.appendVmargs -data "' + $settings.dbeaverWorkspace + '" -con "id=' + $settings.connectionId + '|create=false|connect=true|openConsole=true" -vmargs "-Ddbeaver.drivers.configuration-file=' + $driverConfig + '"'
+            $arguments = '-data "' + $settings.dbeaverWorkspace + '" -con "id=' + $settings.connectionId + '|create=false|connect=true|openConsole=true"'
+            if ((Get-DBeaverDriverSource $settings) -eq 'offline') {
+                $driverConfig = Join-Path $settings.dbeaverWorkspace '.metadata\.config\drivers.xml'
+                $arguments = '--launcher.appendVmargs ' + $arguments + ' -vmargs "-Ddbeaver.drivers.configuration-file=' + $driverConfig + '"'
+            }
             Start-Process -FilePath $settings.dbeaverPath -ArgumentList $arguments | Out-Null
         }
     }

@@ -13,5 +13,6 @@
   "gcloudConfigDirectory": "%APPDATA%\\gcloud",
   "codexPath": "",
   "dbeaverPath": "",
+  "dbeaverDriverSource": "artifactory",
   "dbeaverWorkspace": "%APPDATA%\\DBeaverData\\workspace6"
 }

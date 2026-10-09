@@ -16,12 +16,22 @@ try {
     $reportPath = Join-Path $config.installRoot 'verification.json'
     if ($Phase -eq 'Install') {
         Assert-DBeaverWorkspaceClosed $config.dbeaverWorkspace
+        $dbeaverPath = $config.dbeaverPath
+        if (-not $dbeaverPath) {
+            $candidates = @((Join-Path $env:ProgramFiles 'DBeaver\dbeaver.exe'),(Join-Path $env:LOCALAPPDATA 'DBeaver\dbeaver.exe'))
+            $dbeaverPath = $candidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
+        }
+        if (-not $dbeaverPath -and $config.dbeaverDriverSource -eq 'artifactory') {
+            throw 'Install DBeaver from Company Portal first. If it is not visible, update or create your Citizen Development registration ticket: https://help.marex.com/portal/203?createRequest=true&portalId=203&requestTypeId=927 . If already installed elsewhere, set dbeaverPath to its executable.'
+        }
+        if ($dbeaverPath -and -not (Test-Path -LiteralPath $dbeaverPath -PathType Leaf)) { throw 'The configured DBeaver executable does not exist. Install it from Company Portal and correct dbeaverPath.' }
         $toolsDirectory = Join-Path $config.installRoot 'tools'
         $binDirectory = Join-Path $config.installRoot 'bin'
         $driverDirectory = Join-Path $config.installRoot 'drivers\postgresql'
         $scriptDirectory = Join-Path $config.installRoot 'scripts'
         $backupDirectory = Join-Path $config.installRoot ('backups\' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
-        foreach ($directory in @($binDirectory,$driverDirectory,$scriptDirectory,$backupDirectory)) { [IO.Directory]::CreateDirectory($directory) | Out-Null }
+        foreach ($directory in @($binDirectory,$scriptDirectory,$backupDirectory)) { [IO.Directory]::CreateDirectory($directory) | Out-Null }
+        if ($config.dbeaverDriverSource -eq 'offline') { [IO.Directory]::CreateDirectory($driverDirectory) | Out-Null }
         Write-JsonFile (Join-Path $backupDirectory 'environment.json') @{
             Path=[Environment]::GetEnvironmentVariable('Path','User')
             SSL_CERT_FILE=[Environment]::GetEnvironmentVariable('SSL_CERT_FILE','User')
@@ -30,7 +40,10 @@ try {
         }
         Write-Host 'Checking offline assets...'
         $assets = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'assets\files.json') -Raw | ConvertFrom-Json
-        foreach ($asset in $assets.files) { Test-AssetHash (Join-Path $PSScriptRoot $asset.path) $asset.sha256 }
+        foreach ($asset in $assets.files) {
+            if ($config.dbeaverDriverSource -eq 'artifactory' -and $asset.path -like 'assets/drivers/*.jar') { continue }
+            Test-AssetHash (Join-Path $PSScriptRoot $asset.path) $asset.sha256
+        }
         if ($config.gcloudPath) { $gcloudPath = $config.gcloudPath; $sdkHome = Split-Path -Parent (Split-Path -Parent $gcloudPath) }
         else {
             Write-Host 'Installing the bundled Google Cloud CLI and Python...'
@@ -45,11 +58,6 @@ try {
             $codexHome = Expand-VerifiedPackage $PSScriptRoot 'codex' $toolsDirectory
             $codexPath = Join-Path $codexHome 'codex.exe'
         }
-        $dbeaverPath = $config.dbeaverPath
-        if (-not $dbeaverPath) {
-            $candidates = @((Join-Path $env:ProgramFiles 'DBeaver\dbeaver.exe'),(Join-Path $env:LOCALAPPDATA 'DBeaver\dbeaver.exe'))
-            $dbeaverPath = $candidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
-        }
         if (-not $dbeaverPath) {
             Write-Host 'Installing the bundled DBeaver Community application...'
             $dbeaverHome = Expand-VerifiedPackage $PSScriptRoot 'dbeaver' $toolsDirectory
@@ -61,7 +69,9 @@ try {
         if (-not (Test-Path -LiteralPath $proxyDestination) -or (Get-FileHash -LiteralPath $proxyDestination -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $proxySource -Algorithm SHA256).Hash) {
             Copy-Item -LiteralPath $proxySource -Destination $proxyDestination -Force
         }
-        foreach ($asset in $assets.files | Where-Object { $_.path -like 'assets/drivers/*.jar' }) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $asset.path) -Destination $driverDirectory -Force }
+        if ($config.dbeaverDriverSource -eq 'offline') {
+            foreach ($asset in $assets.files | Where-Object { $_.path -like 'assets/drivers/*.jar' }) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $asset.path) -Destination $driverDirectory -Force }
+        }
         foreach ($name in @('Setup.Core.psm1','Runtime.ps1','db_probe.py')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot "scripts\$name") -Destination $scriptDirectory -Force }
         $licenseDirectory = Join-Path $config.installRoot 'licenses'
         [IO.Directory]::CreateDirectory($licenseDirectory) | Out-Null
@@ -88,6 +98,7 @@ try {
             instanceIp=$config.instanceIp;usePrivateIp=$config.usePrivateIp;database=$config.database;localPort=$config.localPort
             connectionName=$config.connectionName;connectionId=$connectionId;dbeaverWorkspace=$config.dbeaverWorkspace
             gcloudPath=$gcloudPath;pythonPath=$pythonPath;codexPath=$codexPath;dbeaverPath=$dbeaverPath
+            dbeaverDriverSource=$config.dbeaverDriverSource
             gcloudConfigDirectory=$config.gcloudConfigDirectory;proxyPath=(Join-Path $binDirectory 'cloud-sql-proxy.exe')
             driverDirectory=$driverDirectory;caBundlePath=$caBundlePath;inputConfigSha256=$config.configSha256
         }
@@ -114,6 +125,9 @@ try {
         & $settings.proxyPath --version
         if ($LASTEXITCODE -ne 0) { throw 'The Cloud SQL proxy did not pass its version check.' }
         Test-DBeaverProfile $settings | Out-Null
+        if ($config.dbeaverDriverSource -eq 'artifactory') {
+            Write-Host 'In this DBeaver workspace, open Window > Preferences > Connection > Drivers > Maven. Add https://artifactory.marex.com/artifactory/maven-virtual/ (URL only; no credentials), move it to the top, apply, and fully RESTART DBeaver before downloading drivers or testing the connection.'
+        }
         Write-Host 'Install complete. Config retained. Next run Authenticate, then Verify, and test the saved DBeaver connection.'
         exit 0
     }
@@ -127,14 +141,16 @@ try {
         exit 0
     }
     if ($Phase -eq 'Complete' -and -not $DBeaverConfirmed) { throw 'Complete requires confirmation that the saved DBeaver profile passes Test Connection. Config retained.' }
-    Write-Host 'Verifying tool executables, local libraries, DBeaver profile, and live database access...'
+    Write-Host 'Verifying tool executables, DBeaver profile, and live database access...'
     Test-InstalledEnvironment $settings -ProcessOnly:$ProcessEnvironmentOnly
     foreach ($program in @($settings.gcloudPath,$settings.codexPath,$settings.proxyPath)) {
         & $program --version
         if ($LASTEXITCODE -ne 0) { throw 'A required tool failed its version check.' }
     }
     $assets = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'assets\files.json') -Raw | ConvertFrom-Json
-    foreach ($asset in $assets.files | Where-Object { $_.path -like 'assets/drivers/*.jar' }) { Test-AssetHash (Join-Path $settings.driverDirectory ([IO.Path]::GetFileName($asset.path))) $asset.sha256 }
+    if ((Get-DBeaverDriverSource $settings) -eq 'offline') {
+        foreach ($asset in $assets.files | Where-Object { $_.path -like 'assets/drivers/*.jar' }) { Test-AssetHash (Join-Path $settings.driverDirectory ([IO.Path]::GetFileName($asset.path))) $asset.sha256 }
+    }
     Test-DBeaverProfile $settings | Out-Null
     Invoke-DatabaseVerification $settings
     $report = [PSCustomObject]@{schemaVersion=1;allChecksPassed=$true;verifiedAtUtc=[DateTime]::UtcNow.ToString('o');configSha256=$config.configSha256;dbeaverConfirmed=[bool]$DBeaverConfirmed;configDeleted=$false}

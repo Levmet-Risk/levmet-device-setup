@@ -28,7 +28,9 @@ function Read-SetupConfig {
     catch { throw 'config.local.json is not valid JSON. Check its syntax without pasting its contents into chat.' }
     $fields = @('schemaVersion','email','instanceConnectionName','instanceIp','usePrivateIp','database','localPort','connectionName','installRoot','caCertificatePath','gcloudPath','gcloudConfigDirectory','codexPath','dbeaverPath','dbeaverWorkspace')
     foreach ($name in $fields) { if (-not $config.PSObject.Properties[$name]) { throw "Missing config field: $name" } }
-    foreach ($property in $config.PSObject.Properties) { if ($property.Name -notin $fields) { throw 'The config has unsupported fields. Passwords, tokens, and service-account keys are not used by this IAM setup.' } }
+    foreach ($property in $config.PSObject.Properties) { if ($property.Name -notin ($fields + @('dbeaverDriverSource'))) { throw 'The config has unsupported fields. Passwords, tokens, and service-account keys are not used by this IAM setup.' } }
+    if (-not $config.PSObject.Properties['dbeaverDriverSource']) { $config | Add-Member -NotePropertyName dbeaverDriverSource -NotePropertyValue 'artifactory' }
+    if ($config.dbeaverDriverSource -notin @('artifactory','offline')) { throw 'dbeaverDriverSource must be artifactory or offline.' }
     if ($config.schemaVersion -ne 1) { throw 'Unsupported config schemaVersion.' }
     if ($config.email -notmatch '^[A-Za-z0-9._+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$') { throw 'Set email to your work Google/IAM email address.' }
     if ($config.instanceConnectionName -notmatch '^[a-z][a-z0-9-]+:[a-z0-9-]+:[a-z0-9-]+$') { throw 'instanceConnectionName must be project:region:instance.' }
@@ -193,13 +195,26 @@ function Assert-DBeaverWorkspaceClosed {
     }
 }
 
-function Set-DBeaverProfile {
+function Get-DBeaverDriverSource {
+    param($Settings)
+    # Installed settings predating the Artifactory workflow used the offline driver.
+    if (-not $Settings.PSObject.Properties['dbeaverDriverSource']) { return 'offline' }
+    if ($Settings.dbeaverDriverSource -notin @('artifactory','offline')) { throw 'Unknown DBeaver driver source. Rerun Install with a valid config.' }
+    return $Settings.dbeaverDriverSource
+}
+
+function Get-DBeaverDriverId {
+    param($Settings)
+    if ((Get-DBeaverDriverSource $Settings) -eq 'offline') { return 'levmet-postgres-offline' }
+    return 'postgres-jdbc'
+}
+
+function Set-DBeaverOfflineDriver {
     param($Settings, [string]$BackupDirectory)
     # A running Eclipse application can overwrite externally edited workspace files.
     $workspace = $Settings.dbeaverWorkspace
     Assert-DBeaverWorkspaceClosed $workspace
     $driversPath = Join-Path $workspace '.metadata\.config\drivers.xml'
-    $sourcesPath = Join-Path $workspace 'General\.dbeaver\data-sources.json'
     $document = [xml]::new()
     $document.XmlResolver = $null
     if (Test-Path -LiteralPath $driversPath) {
@@ -231,11 +246,18 @@ function Set-DBeaverProfile {
     $writerSettings.Indent = $true
     $writer = [Xml.XmlWriter]::Create($driversPath,$writerSettings)
     try { $document.Save($writer) } finally { $writer.Dispose() }
+}
+
+function Set-DBeaverProfile {
+    param($Settings, [string]$BackupDirectory)
+    Assert-DBeaverWorkspaceClosed $Settings.dbeaverWorkspace
+    if ((Get-DBeaverDriverSource $Settings) -eq 'offline') { Set-DBeaverOfflineDriver $Settings $BackupDirectory }
+    $sourcesPath = Join-Path $Settings.dbeaverWorkspace 'General\.dbeaver\data-sources.json'
     $sources = if (Test-Path -LiteralPath $sourcesPath) { Get-Content -LiteralPath $sourcesPath -Raw -Encoding UTF8 | ConvertFrom-Json } else { [PSCustomObject]@{connections=[PSCustomObject]@{}} }
     if (-not $sources.PSObject.Properties['connections']) { $sources | Add-Member -NotePropertyName connections -NotePropertyValue ([PSCustomObject]@{}) }
     # Only the deterministic setup-owned ID is updated. Other profiles are preserved.
     $profile = [ordered]@{
-        provider='postgresql'; driver='levmet-postgres-offline'; name=$Settings.connectionName; 'save-password'=$true
+        provider='postgresql'; driver=(Get-DBeaverDriverId $Settings); name=$Settings.connectionName; 'save-password'=$true
         configuration=[ordered]@{
             host='127.0.0.1';port=[string]$Settings.localPort;database=$Settings.database;configurationType='MANUAL';type='dev';user=$Settings.email
             properties=@{sslmode='disable';ssl='false';connectTimeout='20'}
@@ -253,7 +275,9 @@ function Test-DBeaverProfile {
     $property = $sources.connections.PSObject.Properties[$Settings.connectionId]
     if (-not $property) { throw 'The managed DBeaver connection profile is missing.' }
     $profile = $property.Value
-    if ($profile.driver -ne 'levmet-postgres-offline' -or $profile.configuration.host -ne '127.0.0.1' -or $profile.configuration.port -ne [string]$Settings.localPort -or $profile.configuration.database -ne $Settings.database -or $profile.configuration.properties.sslmode -ne 'disable') { throw 'The DBeaver profile no longer matches the setup settings.' }
+    if ($profile.provider -ne 'postgresql' -or $profile.driver -ne (Get-DBeaverDriverId $Settings) -or $profile.configuration.host -ne '127.0.0.1' -or $profile.configuration.port -ne [string]$Settings.localPort -or $profile.configuration.database -ne $Settings.database -or $profile.configuration.user -ne $Settings.email -or $profile.configuration.properties.sslmode -ne 'disable') { throw 'The DBeaver profile no longer matches the setup settings.' }
+    # Maven resolution/JDBC loading is verified by the user's DBeaver Test Connection.
+    if ((Get-DBeaverDriverSource $Settings) -eq 'artifactory') { return $true }
     $drivers = [xml](Get-Content -LiteralPath (Join-Path $Settings.dbeaverWorkspace '.metadata\.config\drivers.xml') -Raw)
     $libraries = @($drivers.SelectNodes('/drivers/driver[@provider="postgresql" and @id="levmet-postgres-offline"]/library[not(@disabled="true")]'))
     if ($libraries.Count -ne 11) { throw 'DBeaver must have all eleven local driver libraries configured.' }

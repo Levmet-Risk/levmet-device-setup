@@ -22,6 +22,14 @@ $inputConfig.dbeaverWorkspace = Join-Path $testRoot 'workspace with spaces'
 Write-JsonFile $configPath $inputConfig
 $config = Read-SetupConfig $configPath $repo
 Assert ($config.email -eq 'test.user@example.com') 'Valid config was rejected.'
+Assert ($config.dbeaverDriverSource -eq 'artifactory') 'New configurations must use Artifactory.'
+$inputConfig.PSObject.Properties.Remove('dbeaverDriverSource')
+Write-JsonFile $configPath $inputConfig
+Assert ((Read-SetupConfig $configPath $repo).dbeaverDriverSource -eq 'artifactory') 'Older input configs must default to Artifactory on reinstall.'
+$inputConfig | Add-Member -NotePropertyName dbeaverDriverSource -NotePropertyValue 'invalid'
+Write-JsonFile $configPath $inputConfig
+Assert-Throws { Read-SetupConfig $configPath $repo } 'Invalid driver source was accepted.'
+$inputConfig.dbeaverDriverSource = 'artifactory'
 Assert-Throws { Read-SetupConfig (Join-Path $repo 'config.example.json') $repo } 'Example config must not be accepted as live input.'
 $inputConfig | Add-Member -NotePropertyName password -NotePropertyValue 'not-a-real-secret'
 Write-JsonFile $configPath $inputConfig
@@ -56,6 +64,26 @@ Assert ($saved.connections.('levmet-iam-test').configuration.user -eq $config.em
 [xml]$savedDrivers = Get-Content -LiteralPath $driversFile -Raw
 Assert ($null -ne $savedDrivers.SelectSingleNode('/drivers/driver[@id="existing-sqlite"]')) 'Existing non-PostgreSQL driver was changed.'
 Assert ([IO.File]::ReadAllBytes($driversFile)[0] -eq 60) 'DBeaver XML must start with <, not a UTF-8 byte order mark.'
+Assert ((Get-DBeaverDriverSource $settings) -eq 'offline') 'Existing installed settings lost offline compatibility.'
+$driverHash = (Get-FileHash -LiteralPath $driversFile).Hash
+$settings | Add-Member -NotePropertyName dbeaverDriverSource -NotePropertyValue 'artifactory'
+Set-DBeaverProfile $settings (Join-Path $testRoot 'backups')
+Set-DBeaverProfile $settings (Join-Path $testRoot 'backups')
+$saved = Get-Content -LiteralPath $sourcesFile -Raw | ConvertFrom-Json
+Assert ($saved.connections.('levmet-iam-test').driver -eq 'postgres-jdbc') 'Migration did not switch the managed connection to the standard PostgreSQL driver.'
+Assert (@($saved.connections.PSObject.Properties).Count -eq 2) 'Migration duplicated a connection.'
+Assert ($saved.connections.existing.name -eq 'Preserve me') 'Migration changed an unrelated connection.'
+Assert ((Get-FileHash -LiteralPath $driversFile).Hash -eq $driverHash) 'Artifactory setup changed existing driver definitions.'
+Assert (Test-DBeaverProfile $settings) 'Artifactory profile validation failed.'
+$saved.connections.('levmet-iam-test').configuration.user = 'wrong.user@example.com'
+Write-JsonFile $sourcesFile $saved
+Assert-Throws { Test-DBeaverProfile $settings } 'Mismatched IAM user was accepted.'
+Set-DBeaverProfile $settings (Join-Path $testRoot 'backups')
+$settings.dbeaverWorkspace = Join-Path $testRoot 'fresh artifactory workspace'
+$settings.driverDirectory = Join-Path $testRoot 'missing drivers'
+Set-DBeaverProfile $settings (Join-Path $testRoot 'backups')
+Assert (Test-DBeaverProfile $settings) 'Fresh Artifactory setup required offline libraries.'
+Assert (-not (Test-Path -LiteralPath (Join-Path $settings.dbeaverWorkspace '.metadata\.config\drivers.xml'))) 'Fresh Artifactory setup wrote an offline driver definition.'
 $report = [PSCustomObject]@{allChecksPassed=$false;configSha256=$config.configSha256;verifiedAtUtc=[DateTime]::UtcNow.ToString('o')}
 Assert-Throws { Remove-CompletedConfig $config $report -DBeaverConfirmed } 'Failed verification allowed deletion.'
 Assert (Test-Path -LiteralPath $configPath) 'Failed verification deleted the config.'
