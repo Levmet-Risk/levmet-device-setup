@@ -40,11 +40,18 @@ credentials, or secret-file contents such as `logICE.json`.
 Update this repository, ensure the reporting data/code folders are synced, and run:
 
 ```powershell
-.\CodeEnvironment.cmd -Phase Audit
-.\CodeEnvironment.cmd -Phase Apply -BundlePath "$env:USERPROFILE\Downloads\levmet-code-env.levmet-env"
-.\CodeEnvironment.cmd -Phase Verify
+git pull --ff-only
+.\CodeEnvironment.cmd -Phase Complete
 ```
 
+`Complete` uses the prepared bundle included in this repository. It applies all
+managed database, path, and credential settings and runs verification in the same
+invocation. The final summary separates those categories and reports `INCOMPLETE`
+with exit code `2` when settings, credentials, or inputs are still missing. A
+successful SendGrid import is only one part of that setup.
+
+For a different transfer, pass
+`-BundlePath "$env:USERPROFILE\Downloads\levmet-code-env.levmet-env"` to Complete.
 Enter the transfer passphrase at the masked prompt. If there is no transfer yet,
 `-Phase Apply` on its own configures the available paths and database identity.
 Run Apply again with the bundle when it arrives. Repeated application is safe.
@@ -127,7 +134,7 @@ unrecognized variables, dynamic accesses, parse errors, and hardcoded path
 locations. An explicit `-PythonPath` can select another working Python 3.10+ for
 the scanner. The scanner never imports the inspected code.
 
-Verify returns `0` when the inventoried managed settings, input paths, and
+Verify and Complete return `0` when the inventoried managed settings, input paths, and
 credentials are present, `2` for remaining gaps, and `1` for an operation error.
 Apply can successfully write the available settings while Verify still reports
 missing optional/legacy capabilities. Credential presence and path existence do

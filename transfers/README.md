@@ -9,8 +9,7 @@ On the new PC, from this repository:
 
 ```powershell
 git pull --ff-only
-.\CodeEnvironment.cmd -Phase Apply -BundlePath ".\transfers\levmet-code-env-20261009.levmet-env"
-.\CodeEnvironment.cmd -Phase Verify
+.\CodeEnvironment.cmd -Phase Complete
 ```
 
 Enter the password at the masked prompt. Its local text file is on the source
@@ -18,6 +17,12 @@ PC under `%LOCALAPPDATA%\Levmet\CodeEnvironment\TransferKeys`, in the export's
 subfolder, named `levmet-code-env-20261009-password.txt`. Access to that folder
 is restricted to the source Windows user. Transfer the password separately;
 it is not in this repository. Restart terminals and IDEs after Apply.
+
+`Complete` uses this prepared bundle, applies the database identity and path
+variables, imports the available credentials, and verifies the resulting
+settings in one run. It prints separate database, path, credential, and
+application-setting counts. Exit code `2` and `INCOMPLETE` mean gaps remain;
+successful SendGrid import alone does not mean the full setup is complete.
 
 This export contains the configured `SENDGRID_API_KEY`. No Graph credential,
 broker SFTP password, or legacy mail passwords were present on the source PC.

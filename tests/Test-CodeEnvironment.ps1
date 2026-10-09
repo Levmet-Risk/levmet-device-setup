@@ -41,6 +41,27 @@ Assert (@($plan | Where-Object Name -eq 'PATHS')[0].Action -eq 'None') 'Generic 
 $redacted = Get-CodeEnvironmentReport $plan | ConvertTo-Json -Depth 10
 Assert (-not $redacted.Contains($dummySecret)) 'Report leaked a secret.'
 Assert (-not $redacted.Contains('Desired') -and -not $redacted.Contains('Current')) 'Report retained value-bearing properties.'
+$completion = Get-CodeEnvironmentCompletion (Get-CodeEnvironmentReport $plan) $false
+Assert (-not $completion.complete -and $completion.pendingCount -gt 0) 'A plan that has not been applied was reported complete.'
+Assert ($completion.categories.derived.total -eq 6 -and $completion.categories.path.total -eq 20) 'Completion omitted database or path settings.'
+$readyRows = $redacted | ConvertFrom-Json
+foreach ($row in $readyRows) {
+    if ($row.Kind -in @('derived','path','secret')) { $row.State='Configured'; $row.Action='Unchanged'; $row.PathStatus='' }
+    elseif ($row.Kind -eq 'setting' -and $row.State -eq 'Configured') { $row.Action='Unchanged' }
+}
+$ready = Get-CodeEnvironmentCompletion $readyRows $true
+Assert ($ready.complete -and $ready.categories.setting.usingDefaults -gt 0) 'Optional application defaults prevented complete verification.'
+Assert ($ready.categories.secret.configured -eq 5 -and $ready.categories.derived.configured -eq 6) 'Completion counts omitted configured credentials or identity.'
+Assert (-not (Get-CodeEnvironmentCompletion $readyRows $false).complete) 'A missing Graph credential was reported complete.'
+$samplePath = @($readyRows | Where-Object Kind -eq 'path')[0]
+$samplePath.PathStatus = 'Missing input path'
+Assert (-not (Get-CodeEnvironmentCompletion $readyRows $true).complete) 'A missing input path was reported complete.'
+$samplePath.PathStatus = ''; $samplePath.Action='Set'
+Assert (-not (Get-CodeEnvironmentCompletion $readyRows $true).complete) 'An unapplied path setting was reported complete.'
+$samplePath.Action='Unchanged'
+$sampleSecret = @($readyRows | Where-Object Name -eq 'LEVMET_EMAIL_PASSWORD')[0]
+$sampleSecret.State='Missing credential'; $sampleSecret.Action='None'
+Assert (-not (Get-CodeEnvironmentCompletion $readyRows $true).complete) 'SendGrid success concealed a missing mail credential.'
 Assert-Throws { Resolve-CodePortablePath ([PSCustomObject]@{root='riskRoot';relative='..\escape'}) $target.roots } 'Parent traversal was accepted.'
 Assert-Throws { Resolve-CodePortablePath ([PSCustomObject]@{root='riskRoot';relative='C:\escape'}) $target.roots } 'Absolute relative path was accepted.'
 Assert-Throws { Resolve-CodePortablePath ([PSCustomObject]@{root='riskRoot';relative='file:stream'}) $target.roots } 'Alternate data stream was accepted.'

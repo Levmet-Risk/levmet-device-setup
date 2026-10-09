@@ -31,13 +31,18 @@ the supported commands, overrides, and recovery procedure.
    as a SecureString to the core module, and verify decryption before reporting
    completion. An explicit request to publish the encrypted bundle authorizes
    adding that exact artifact to Git; its password must remain separate.
-4. On the destination, run `CodeEnvironment.cmd -Phase Apply -BundlePath
-   "<copied transfer path>.levmet-env"` in an interactive terminal for its masked
-   passphrase prompt. Apply without a bundle is also useful: it configures the
+4. On the destination, run `CodeEnvironment.cmd -Phase Complete` to apply the
+   prepared repository bundle, configure paths/database identity, and verify all
+   managed settings in one run. For another bundle, pass `-BundlePath
+   "<copied transfer path>.levmet-env"`. Use an interactive terminal for the
+   masked passphrase prompt. Apply without a bundle is also useful: it configures the
    available paths/identity now and can import credentials later. Honor intended
    target paths and the audit's conflicts; use `-ReplaceExisting` when replacing
    those settings is part of the user's request. A DPAPI backup permits rollback.
-5. Run Verify and report its real gaps. Missing credentials can be entered locally
+5. Read the category counts and remaining gaps from Complete, or run Verify after
+   a separate Apply. A SendGrid success message alone does not confirm full setup.
+   SetSecret changes one credential and must not substitute for Complete.
+   Missing credentials can be entered locally
    using the masked `SetSecret -Name <supported name>` or `SetGraphSecret` phase.
    Do not treat absent source credentials as a completed migration. The ICE
    credentials JSON is only a referenced path; the transfer does not copy it.
@@ -56,5 +61,5 @@ Presence checks do not verify service access or credential validity.
 Report which settings were applied, the encrypted bundle/backup/report locations
 when created, and remaining missing credentials or input paths. Tell the user to
 restart terminals/IDEs and relaunch jobs to inherit the environment. If the new PC
-   is not accessible, deliver the prepared follow-up and exact source/destination
-   commands; do not claim it has been configured remotely.
+is not accessible, deliver the prepared follow-up and exact source/destination
+commands; do not claim it has been configured remotely.

@@ -244,6 +244,28 @@ function Get-CodeEnvironmentReport($Plan) {
     @($Plan | Select-Object Name,Kind,Action,State,PathStatus,Source)
 }
 
+function Get-CodeEnvironmentCompletion($Rows, [bool]$HasGraph) {
+    $gaps = @($Rows | Where-Object { $_.State -like 'Needs *' -or $_.State -eq 'Missing credential' -or $_.PathStatus -eq 'Missing input path' })
+    $pending = @($Rows | Where-Object Action -in @('Set','Conflict'))
+    $counts = @{}
+    foreach ($kind in @('derived','path','secret','setting')) {
+        $group = @($Rows | Where-Object Kind -eq $kind)
+        $counts[$kind] = [PSCustomObject]@{
+            total=$group.Count
+            configured=@($group | Where-Object { $_.State -eq 'Configured' -and $_.Action -eq 'Unchanged' }).Count
+            usingDefaults=@($group | Where-Object State -eq 'Uses code default / caller value').Count
+        }
+    }
+    [PSCustomObject]@{
+        complete=($gaps.Count -eq 0 -and $pending.Count -eq 0 -and $HasGraph)
+        missingCount=$gaps.Count
+        pendingCount=$pending.Count
+        missingInputPaths=@($Rows | Where-Object PathStatus -eq 'Missing input path').Count
+        graphCredentialPresent=$HasGraph
+        categories=[PSCustomObject]$counts
+    }
+}
+
 function Save-CodeEnvironmentBackup($Snapshot, [string]$Directory) {
     [IO.Directory]::CreateDirectory($Directory) | Out-Null
     $bytes = [Text.Encoding]::UTF8.GetBytes(($Snapshot | ConvertTo-Json -Depth 15 -Compress))

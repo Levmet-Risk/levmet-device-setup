@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('Audit','Export','Apply','Verify','Restore','SetSecret','SetGraphSecret')][string]$Phase = 'Audit',
+    [ValidateSet('Audit','Export','Apply','Complete','Verify','Restore','SetSecret','SetGraphSecret')][string]$Phase = 'Audit',
     [string]$ConfigPath,
     [string]$CodeRoot,
     [string]$Email,
@@ -90,13 +90,17 @@ try {
         Write-Host 'Only configured codebase variables and the selected Graph credential were captured. No Google/Codex login caches were copied.'
         exit 0
     }
+    if ($Phase -eq 'Complete' -and -not $BundlePath) {
+        $BundlePath = Join-Path $PSScriptRoot 'transfers\levmet-code-env-20261009.levmet-env'
+        if (-not (Test-Path -LiteralPath $BundlePath -PathType Leaf)) { throw [Levmet.Setup.EnvironmentSetupException]::new('The prepared transfer is missing. Update this repository or pass -BundlePath to your encrypted export.') }
+    }
     $transfer = $null
     if ($BundlePath) {
         if (-not $Password) { $Password = Read-TransferPassphrase }
         $transfer = Read-CodeTransferFile $BundlePath $Password
     }
     $plan = @(New-CodeEnvironmentPlan $context $transfer)
-    if ($Phase -eq 'Apply') {
+    if ($Phase -in @('Apply','Complete')) {
         $graph = if ($transfer) { $transfer.graph } else { $null }
         $result = Set-CodeEnvironmentPlan $plan -Graph $graph -BackupDirectory $backupDirectory -ReplaceExisting:$ReplaceExisting
         Write-Host ('Environment entries changed: ' + $result.Changed + '; Graph credential changed: ' + $result.CredentialChanged)
@@ -122,19 +126,29 @@ try {
     $hasGraph = $null -ne (Get-CodeGraphCredential $selectors)
     $reportRows = @(Get-CodeEnvironmentReport $plan)
     $gaps = @($reportRows | Where-Object { $_.State -like 'Needs *' -or $_.State -eq 'Missing credential' -or $_.PathStatus -eq 'Missing input path' })
+    $completion = Get-CodeEnvironmentCompletion $reportRows $hasGraph
     $unknown = @(if ($scan) { $scan.variables | Where-Object { $_.name -notin $reportRows.Name } | Select-Object -ExpandProperty name })
-    $report = [PSCustomObject]@{schemaVersion=1;phase=$Phase;checkedAtUtc=[DateTime]::UtcNow.ToString('o');variables=$reportRows;graphCredentialPresent=$hasGraph;gapCount=$gaps.Count;unknownVariables=@($unknown);scan=$scan;servicesTested=$false}
+    $report = [PSCustomObject]@{schemaVersion=1;phase=$Phase;checkedAtUtc=[DateTime]::UtcNow.ToString('o');variables=$reportRows;graphCredentialPresent=$hasGraph;gapCount=$gaps.Count;completion=$completion;unknownVariables=@($unknown);scan=$scan;servicesTested=$false}
     [IO.Directory]::CreateDirectory($ReportDirectory) | Out-Null
     $reportPath = Join-Path $ReportDirectory 'environment-report.json'
     [IO.File]::WriteAllText($reportPath,($report | ConvertTo-Json -Depth 20),[Text.UTF8Encoding]::new($false))
     $reportRows | Where-Object Kind -in @('derived','path','secret','setting') | Format-Table Name,Action,State,PathStatus -AutoSize | Out-Host
     Write-Host ('Graph credential present: ' + $hasGraph + '; missing settings/credentials/inputs: ' + $gaps.Count)
+    if ($Phase -in @('Apply','Complete','Verify')) {
+        $categories = $completion.categories
+        Write-Host ('Database/identity: ' + $categories.derived.configured + '/' + $categories.derived.total + ' configured')
+        Write-Host ('Path variables: ' + $categories.path.configured + '/' + $categories.path.total + ' configured; missing input paths: ' + $completion.missingInputPaths)
+        Write-Host ('API/mail credential variables: ' + $categories.secret.configured + '/' + $categories.secret.total + ' configured')
+        Write-Host ('Application settings: ' + $categories.setting.configured + ' explicit; ' + $categories.setting.usingDefaults + ' using code defaults')
+        if ($completion.complete) { Write-Host 'Managed environment verification passed. Service access and report execution have not been tested.' }
+        else { Write-Host ('Managed environment INCOMPLETE: ' + $completion.missingCount + ' missing settings/credentials/inputs; ' + $completion.pendingCount + ' changes still needed; Graph credential present: ' + $hasGraph) }
+    }
     if ($context.derived.dbPort -ne '5433') { Write-Host 'Some legacy scripts hardcode port 5433. Their source/launchers need separate review for this tunnel port.' }
     if ($unknown.Count) { Write-Host ('New variable names need review before migration: ' + ($unknown -join ', ')) }
     if ($scan -and $scan.unresolved.Count) { Write-Host ('Static scan has ' + $scan.unresolved.Count + ' unresolved references/parse issues; see the report.') }
     Write-Host ('Redacted report: ' + $reportPath)
     Write-Host 'Runtime/per-run/app-local options are listed in the report and left to their launchers. No reports, emails, broker downloads or database writes were run.'
-    if ($Phase -eq 'Verify' -and ($gaps.Count -or -not $hasGraph -or @($reportRows | Where-Object Action -in @('Set','Conflict')).Count)) { exit 2 }
+    if ($Phase -in @('Verify','Complete') -and -not $completion.complete) { exit 2 }
     exit 0
 } catch {
     # Native/crypto/JSON exceptions can include inputs. Emit only controlled messages.

@@ -67,7 +67,9 @@ For the reporting code's environment variables, run the independent
 **`$levmet-code-environment`** follow-up after device setup. It configures the new
 machine's paths/database identity and supports a password-protected transfer of
 configured API/mail credentials. **You do not need to rerun the device setup
-skill.** See [the code environment guide](CODE-ENVIRONMENT.md).
+skill.** Run `.\CodeEnvironment.cmd -Phase Complete` to apply the prepared
+transfer, configure the remaining managed variables, and verify the results in
+one run. See [the code environment guide](CODE-ENVIRONMENT.md).
 
 Restart existing terminals and VS Code to inherit the updated user PATH.
 
