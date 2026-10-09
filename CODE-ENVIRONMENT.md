@@ -5,6 +5,13 @@ This is an independent follow-up: it does not repeat DBeaver installation,
 Google authentication, or the original device setup. It reads the installed
 `settings.json`, so the original `config.local.json` is not needed.
 
+An actual encrypted export from 9 October 2026 is now included in
+[`transfers/levmet-code-env-20261009.levmet-env`](transfers/levmet-code-env-20261009.levmet-env)
+at the user's request. For this prepared bundle, follow the
+[new-machine import instructions](transfers/README.md). Its generated password
+is saved separately on the source PC, outside Git. The sections below also
+describe how to create another export using your own passphrase.
+
 ## On the source PC: capture configured credentials and overrides
 
 Open PowerShell in the updated `levmet-device-setup` repository:

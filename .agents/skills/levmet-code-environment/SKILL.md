@@ -25,6 +25,12 @@ the supported commands, overrides, and recovery procedure.
    export only supported configured variables and the selected Graph credential.
    Do not put passphrases or credential values in chat, commands, source, reports,
    or Git. Transfer the encrypted file and keep the passphrase separate.
+   If the user requests an unattended export, generate a password with a
+   cryptographic random generator and at least 32 random bytes; save it outside
+   the repository in a file restricted to that Windows user. Pass it in memory
+   as a SecureString to the core module, and verify decryption before reporting
+   completion. An explicit request to publish the encrypted bundle authorizes
+   adding that exact artifact to Git; its password must remain separate.
 4. On the destination, run `CodeEnvironment.cmd -Phase Apply -BundlePath
    "<copied transfer path>.levmet-env"` in an interactive terminal for its masked
    passphrase prompt. Apply without a bundle is also useful: it configures the
@@ -50,5 +56,5 @@ Presence checks do not verify service access or credential validity.
 Report which settings were applied, the encrypted bundle/backup/report locations
 when created, and remaining missing credentials or input paths. Tell the user to
 restart terminals/IDEs and relaunch jobs to inherit the environment. If the new PC
-is not accessible, deliver the prepared follow-up and exact source/destination
-commands; do not claim it has been configured remotely.
+   is not accessible, deliver the prepared follow-up and exact source/destination
+   commands; do not claim it has been configured remotely.
