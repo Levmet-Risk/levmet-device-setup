@@ -1,0 +1,4 @@
+interface:
+  display_name: "Levmet code environment"
+  short_description: "Configure reporting paths, identity and credentials"
+  default_prompt: "Use $levmet-code-environment to configure this PC for the Levmet reporting code after device setup and report any missing settings or credentials."

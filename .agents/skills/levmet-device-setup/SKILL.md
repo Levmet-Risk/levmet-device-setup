@@ -11,6 +11,11 @@ Read [the config and troubleshooting reference](references/setup.md) when prepar
 the config or diagnosing a failed phase. Run the supplied scripts rather than
 recreating installers or hand-editing the user's DBeaver workspace.
 
+For environment variables needed by the separate Levmet reporting code after
+device setup, use the independent `levmet-code-environment` skill in this
+repository. See [the follow-up guide](../../../CODE-ENVIRONMENT.md). A completed
+device setup does not need to be rerun to configure those variables.
+
 The IT desk's October 2026 workflow is the default: install DBeaver from Company
 Portal, add Marex Artifactory as the first Maven repository with only its URL, and
 fully restart DBeaver before downloading drivers. Use the exact URL and ticket

@@ -1,0 +1,949 @@
+{
+  "schemaVersion": 1,
+  "auditedAt": "2026-10-09",
+  "scannedFiles": 594,
+  "graphCredential": {
+    "service": "ms_graph_secret",
+    "user": "RiskReports"
+  },
+  "variables": [
+    {
+      "name": "COMEX_173_OVERRIDE",
+      "kind": "run",
+      "source": {
+        "file": "Mark Automations/Spike Delta Arb/spike_broker_arb_morning_report.py",
+        "line": 61,
+        "kind": "read"
+      },
+      "referenceCount": 2
+    },
+    {
+      "name": "COPPER_MONITOR_REQUIRE_DATA",
+      "kind": "test",
+      "source": {
+        "file": "copper_spread_monitor/tests/conftest.py",
+        "line": 65,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "DASH_BASE_PATH",
+      "kind": "app-local",
+      "source": {
+        "file": "Mark Automations/power-var/src/levmet_power_var/dashboards/power_var_monitor/base_path.py",
+        "line": 26,
+        "kind": "read"
+      },
+      "referenceCount": 2
+    },
+    {
+      "name": "DATE",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/SHFE Arb Scraper/run_scraper.bat",
+        "line": 3,
+        "kind": "batch"
+      },
+      "referenceCount": 2
+    },
+    {
+      "name": "DB_URL",
+      "kind": "app-local",
+      "source": {
+        "file": "Temp - RISK DASH APP/src/risk_dashboard/config/settings.py",
+        "line": 55,
+        "kind": "settings-model-field"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "ENVIRONMENT",
+      "kind": "app-local",
+      "source": {
+        "file": "Temp - RISK DASH APP/src/risk_dashboard/config/settings.py",
+        "line": 54,
+        "kind": "settings-model"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "ERRORLEVEL",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/Alex Fernandes FTP/run_alex_fernandes_ftp.bat",
+        "line": 16,
+        "kind": "batch"
+      },
+      "referenceCount": 28
+    },
+    {
+      "name": "EXPECTED_USER",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/_venv_bootstrap.bat",
+        "line": 25,
+        "kind": "batch"
+      },
+      "referenceCount": 4
+    },
+    {
+      "name": "FORCE_MAREX",
+      "kind": "run",
+      "source": {
+        "file": "Mark Automations/Greeks/GG_options_scenarios.py",
+        "line": 125,
+        "kind": "read"
+      },
+      "referenceCount": 6
+    },
+    {
+      "name": "GREEKS_REPORT_DATE",
+      "kind": "run",
+      "source": {
+        "file": "Mark Automations/Greeks/options_greeks_engine.py",
+        "line": 89,
+        "kind": "read"
+      },
+      "referenceCount": 3
+    },
+    {
+      "name": "INSTALL",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/_venv_bootstrap.bat",
+        "line": 23,
+        "kind": "batch"
+      },
+      "referenceCount": 2
+    },
+    {
+      "name": "LEVGAS_WRITE_YTD",
+      "kind": "run",
+      "source": {
+        "file": "Trader Reports YTD-SQL-DB-Migration/traders/Levgas_automatic_report.py",
+        "line": 614,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_ALL_TRADES_DIR",
+      "kind": "path",
+      "root": "riskRoot",
+      "relative": "All trades",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 61,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_BROKER_DIR",
+      "kind": "path",
+      "root": "riskRoot",
+      "relative": "FTP files",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 63,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_BROKER_SFTP_PASSWORD",
+      "kind": "secret",
+      "source": {
+        "file": "Tools/Data_Marex.py",
+        "line": 44,
+        "kind": "read"
+      },
+      "referenceCount": 25
+    },
+    {
+      "name": "LEVMET_DB_HOST",
+      "kind": "derived",
+      "derive": "dbHost",
+      "source": {
+        "file": "Mark Automations/spark-report/src/spark_report/db.py",
+        "line": 16,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_DB_NAME",
+      "kind": "derived",
+      "derive": "dbName",
+      "source": {
+        "file": "Mark Automations/spark-report/src/spark_report/db.py",
+        "line": 18,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_DB_PORT",
+      "kind": "derived",
+      "derive": "dbPort",
+      "source": {
+        "file": "Mark Automations/spark-report/src/spark_report/db.py",
+        "line": 17,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_DOCS_ROOT",
+      "kind": "path",
+      "root": "riskRoot",
+      "relative": "",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/spark-report/src/spark_report/paths.py",
+        "line": 20,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_EMAIL_FROM",
+      "kind": "setting",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 136,
+        "kind": "read"
+      },
+      "referenceCount": 5
+    },
+    {
+      "name": "LEVMET_EMAIL_PASSWORD",
+      "kind": "secret",
+      "source": {
+        "file": "risk_limits_reports/config.py",
+        "line": 22,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_EMAIL_RECIPIENTS",
+      "kind": "setting",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 137,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_EMAIL_TEST_TO",
+      "kind": "setting",
+      "source": {
+        "file": "shared-email/src/levmet_email.py",
+        "line": 251,
+        "kind": "read"
+      },
+      "referenceCount": 4
+    },
+    {
+      "name": "LEVMET_FEED_DIR",
+      "kind": "path",
+      "root": "riskRoot",
+      "relative": "LME Traders Report/RiskPack_feed",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 67,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_FX_HISTORY_CSV",
+      "kind": "path",
+      "root": "riskRoot",
+      "relative": "FTP files/prices/fx_daily.csv",
+      "pathType": "file",
+      "source": {
+        "file": "Mark Automations/power-var/src/levmet_power_var/settings.py",
+        "line": 208,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_ICE_CREDENTIALS_JSON",
+      "kind": "path",
+      "root": "oneDriveRoot",
+      "relative": "Monaco - Documents/Risk Management/Pricing/json/logICE.json",
+      "pathType": "file",
+      "source": {
+        "file": "Mark Automations/power-var/src/levmet_power_var/settings.py",
+        "line": 193,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_ICE_POWER_DIR",
+      "kind": "path",
+      "root": "oneDriveRoot",
+      "relative": "Monaco - Documents/Risk Management/VM/Risk/Scripts/Pricing/inputs",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/power-var/src/levmet_power_var/settings.py",
+        "line": 180,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_ICE_SETTLEMENT_DIR",
+      "kind": "path",
+      "root": "oneDriveRoot",
+      "relative": "Monaco - Documents/Risk Management/Market Data/ICE_Settlements",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/power-var/src/levmet_power_var/settings.py",
+        "line": 163,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_INCLUDE_PHYSICAL",
+      "kind": "setting",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 95,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_LEVGAS_EMAIL_PASSWORD",
+      "kind": "secret",
+      "source": {
+        "file": "Tools/Data_Sucden_backup/Tools/T-2/PnLwAdj_new_test_t-2.py",
+        "line": 1527,
+        "kind": "read"
+      },
+      "referenceCount": 4
+    },
+    {
+      "name": "LEVMET_LIMITS_OVERLAY",
+      "kind": "path",
+      "root": "codeRoot",
+      "relative": "Mark Automations/limit-monitoring/src/levmet_risk/data/Limits Overlay - F Staal.xlsx",
+      "pathType": "file",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 53,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_MAREX_DIR",
+      "kind": "path",
+      "root": "oneDriveRoot",
+      "relative": "Documents/Mark/Marex Risk Reporting Automation",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 31,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_ONEDRIVE_ROOT",
+      "kind": "path",
+      "root": "oneDriveRoot",
+      "relative": "",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/power-var/src/levmet_power_var/settings.py",
+        "line": 126,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_OUTPUT_DIR",
+      "kind": "path",
+      "root": "codeRoot",
+      "relative": "Mark Automations/limit-monitoring/output",
+      "pathType": "output",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 46,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_POSMON_EMAIL_PASSWORD",
+      "kind": "secret",
+      "source": {
+        "file": "risk_limits_reports/Grouped Positions/positionmon_jn.py",
+        "line": 154,
+        "kind": "read"
+      },
+      "referenceCount": 3
+    },
+    {
+      "name": "LEVMET_POWER_VAR_CACHE",
+      "kind": "path",
+      "root": "localAppData",
+      "relative": "levmet_power_var/cache",
+      "pathType": "output",
+      "source": {
+        "file": "Mark Automations/power-var/src/levmet_power_var/settings.py",
+        "line": 222,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_PRICES_DIR",
+      "kind": "path",
+      "root": "riskRoot",
+      "relative": "FTP files/prices",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 62,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_PRICE_ARCHIVE_DIR",
+      "kind": "path",
+      "root": "riskRoot",
+      "relative": "FTP files/prices",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/power-var/src/levmet_power_var/settings.py",
+        "line": 152,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_RBT_LIMITS_BOOKS_ONLY",
+      "kind": "setting",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 87,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_RISK_PATHS",
+      "kind": "path",
+      "root": "riskRoot",
+      "relative": "",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 30,
+        "kind": "read"
+      },
+      "referenceCount": 3
+    },
+    {
+      "name": "LEVMET_STRESS_REDUCED",
+      "kind": "setting",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 106,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_TEMPLATE",
+      "kind": "path",
+      "root": "codeRoot",
+      "relative": "Mark Automations/limit-monitoring/src/levmet_risk/data/Levmet Risk Pack Template.xlsx",
+      "pathType": "file",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 43,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_TRADERS_DICT",
+      "kind": "path",
+      "root": "riskRoot",
+      "relative": "Traders Dict/traders_dictionary.csv",
+      "pathType": "file",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 64,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_TRADERS_DICT_DIR",
+      "kind": "path",
+      "root": "riskRoot",
+      "relative": "Traders Dict",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/IM-VaR-Plots/im_graph_by_trader.py",
+        "line": 202,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LEVMET_USER_ROOT",
+      "kind": "path",
+      "root": "userProfile",
+      "relative": "",
+      "pathType": "directory",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 28,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LOCALAPPDATA",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/power-var/src/levmet_power_var/settings.py",
+        "line": 226,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "LOGGING",
+      "kind": "app-local",
+      "source": {
+        "file": "Temp - RISK DASH APP/src/risk_dashboard/config/settings.py",
+        "line": 61,
+        "kind": "settings-model"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "MACHINE_LABEL",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/_venv_bootstrap.bat",
+        "line": 26,
+        "kind": "batch"
+      },
+      "referenceCount": 5
+    },
+    {
+      "name": "MARGIN_REPORT_OVERRIDE_RECIPIENTS",
+      "kind": "run",
+      "source": {
+        "file": "Mark Automations/Margin Monitoring/margin_report_common.py",
+        "line": 22,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "MARGIN_REPORT_SEND_EMAIL",
+      "kind": "run",
+      "source": {
+        "file": "Mark Automations/Margin Monitoring/margin_report_common.py",
+        "line": 44,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "MORNING_LIMITS_PORT",
+      "kind": "setting",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 114,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "MORNING_LIMITS_WARN_PCT",
+      "kind": "setting",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 113,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "MS_GRAPH_CLIENT_ID",
+      "kind": "setting",
+      "source": {
+        "file": "ms_graph_mail.py",
+        "line": 9,
+        "kind": "read"
+      },
+      "referenceCount": 15
+    },
+    {
+      "name": "MS_GRAPH_SECRET_SERVICE",
+      "kind": "setting",
+      "source": {
+        "file": "ms_graph_mail.py",
+        "line": 10,
+        "kind": "read"
+      },
+      "referenceCount": 15
+    },
+    {
+      "name": "MS_GRAPH_SECRET_USER",
+      "kind": "setting",
+      "source": {
+        "file": "ms_graph_mail.py",
+        "line": 11,
+        "kind": "read"
+      },
+      "referenceCount": 15
+    },
+    {
+      "name": "MS_GRAPH_TENANT_ID",
+      "kind": "setting",
+      "source": {
+        "file": "ms_graph_mail.py",
+        "line": 8,
+        "kind": "read"
+      },
+      "referenceCount": 15
+    },
+    {
+      "name": "PATHS",
+      "kind": "app-local",
+      "source": {
+        "file": "Temp - RISK DASH APP/src/risk_dashboard/config/settings.py",
+        "line": 59,
+        "kind": "settings-model"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "PORT",
+      "kind": "app-local",
+      "source": {
+        "file": "Mark Automations/power-var/src/levmet_power_var/dashboards/power_var_monitor/app.py",
+        "line": 123,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "POSITION_CARDS_EMAIL_FROM",
+      "kind": "setting",
+      "source": {
+        "file": "Mark Automations/position-cards/position_cards/config.py",
+        "line": 245,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "POSITION_CARDS_EMAIL_RECIPIENTS",
+      "kind": "setting",
+      "source": {
+        "file": "Mark Automations/position-cards/position_cards/config.py",
+        "line": 250,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "PRICES_MAILER_ALERT_RECIPIENTS",
+      "kind": "setting",
+      "source": {
+        "file": "Mark Automations/prices-mailer/prices_mailer/config.py",
+        "line": 142,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "PRICES_MAILER_EMAIL_FROM",
+      "kind": "setting",
+      "source": {
+        "file": "Mark Automations/prices-mailer/prices_mailer/config.py",
+        "line": 132,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "PRICES_MAILER_EMAIL_RECIPIENTS",
+      "kind": "setting",
+      "source": {
+        "file": "Mark Automations/prices-mailer/prices_mailer/config.py",
+        "line": 137,
+        "kind": "read"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "PYCMD",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/_venv_bootstrap.bat",
+        "line": 60,
+        "kind": "batch"
+      },
+      "referenceCount": 2
+    },
+    {
+      "name": "PYTHONPATH",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/spark-report/run_spark_ingest.bat",
+        "line": 8,
+        "kind": "batch"
+      },
+      "referenceCount": 3
+    },
+    {
+      "name": "PYTHONUTF8",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/Dalian Scraper/dalian_scraper.bat",
+        "line": 3,
+        "kind": "batch"
+      },
+      "referenceCount": 6
+    },
+    {
+      "name": "P_DAYS",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/Spike Delta Arb/spike_broker_arb_morning_report.py",
+        "line": 54,
+        "kind": "read"
+      },
+      "referenceCount": 2
+    },
+    {
+      "name": "P_DAYS_HOLIDAY_ADJ",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/Spike Delta Arb/spike_broker_arb_morning_report.py",
+        "line": 60,
+        "kind": "read"
+      },
+      "referenceCount": 3
+    },
+    {
+      "name": "RC",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/Alex Fernandes FTP/run_alex_fernandes_ftp.bat",
+        "line": 28,
+        "kind": "batch"
+      },
+      "referenceCount": 18
+    },
+    {
+      "name": "REBUILD",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/_venv_bootstrap.bat",
+        "line": 22,
+        "kind": "batch"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "REPO",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/_venv_bootstrap.bat",
+        "line": 21,
+        "kind": "batch"
+      },
+      "referenceCount": 4
+    },
+    {
+      "name": "REPORT_DRY_RUN",
+      "kind": "run",
+      "source": {
+        "file": "Trader Reports YTD-SQL-DB-Migration/core/report_email.py",
+        "line": 34,
+        "kind": "read"
+      },
+      "referenceCount": 2
+    },
+    {
+      "name": "RES_HOLIDAY_ADJ",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/Spike Delta Arb/spike_broker_arb_morning_report.py",
+        "line": 59,
+        "kind": "read"
+      },
+      "referenceCount": 3
+    },
+    {
+      "name": "RISK_DB_URL",
+      "kind": "derived",
+      "derive": "dbUrl",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 74,
+        "kind": "read"
+      },
+      "referenceCount": 3
+    },
+    {
+      "name": "RISK_DB_USER",
+      "kind": "derived",
+      "derive": "email",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/src/levmet_risk/settings.py",
+        "line": 73,
+        "kind": "read"
+      },
+      "referenceCount": 2
+    },
+    {
+      "name": "SCRIPT",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/Alex Fernandes FTP/run_alex_fernandes_ftp.bat",
+        "line": 9,
+        "kind": "batch"
+      },
+      "referenceCount": 18
+    },
+    {
+      "name": "SENDGRID_API_KEY",
+      "kind": "secret",
+      "source": {
+        "file": "Tools/sendgrid_test.py",
+        "line": 73,
+        "kind": "write"
+      },
+      "referenceCount": 5
+    },
+    {
+      "name": "SPARK_DRY_RUN",
+      "kind": "run",
+      "source": {
+        "file": "Mark Automations/spark-report/src/spark_report/report.py",
+        "line": 468,
+        "kind": "write"
+      },
+      "referenceCount": 2
+    },
+    {
+      "name": "SPIKE_FORCE_MAREX",
+      "kind": "run",
+      "source": {
+        "file": "Mark Automations/Greeks/options_greeks_engine.py",
+        "line": 417,
+        "kind": "read"
+      },
+      "referenceCount": 3
+    },
+    {
+      "name": "SUM_CM",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/Spike Delta Arb/spike_broker_arb_morning_report.py",
+        "line": 55,
+        "kind": "read"
+      },
+      "referenceCount": 2
+    },
+    {
+      "name": "TIME",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/SHFE Arb Scraper/run_scraper.bat",
+        "line": 3,
+        "kind": "batch"
+      },
+      "referenceCount": 2
+    },
+    {
+      "name": "UI",
+      "kind": "app-local",
+      "source": {
+        "file": "Temp - RISK DASH APP/src/risk_dashboard/config/settings.py",
+        "line": 60,
+        "kind": "settings-model"
+      },
+      "referenceCount": 1
+    },
+    {
+      "name": "USERNAME",
+      "kind": "runtime",
+      "source": {
+        "file": "Futures Prices Levgas Argus .py",
+        "line": 515,
+        "kind": "read"
+      },
+      "referenceCount": 3
+    },
+    {
+      "name": "VENV",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/_venv_bootstrap.bat",
+        "line": 31,
+        "kind": "batch"
+      },
+      "referenceCount": 10
+    },
+    {
+      "name": "VENV_DIR",
+      "kind": "runtime",
+      "source": {
+        "file": "Mark Automations/limit-monitoring/_venv_bootstrap.bat",
+        "line": 21,
+        "kind": "batch"
+      },
+      "referenceCount": 5
+    },
+    {
+      "name": "user_email",
+      "kind": "derived",
+      "derive": "email",
+      "source": {
+        "file": "GrandReport - SQL DB Migration.py",
+        "line": 1366,
+        "kind": "read"
+      },
+      "referenceCount": 34
+    }
+  ],
+  "unresolved": [
+    {
+      "file": "Grandreport_split_metals_energy-LEV-MON-WKS-01.py",
+      "line": 53,
+      "reason": "Python parse error; literal accesses still scanned"
+    },
+    {
+      "file": "shared-email/tests/test_mailer.py",
+      "line": 27,
+      "reason": "Dynamic environment name"
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 config.local.json
 *.local.json
+*.levmet-env
+*.dpapi
 .cache/
 test-results/
 __pycache__/
